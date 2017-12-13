@@ -13,7 +13,6 @@ class BookShelf extends Component {
 		    <ol className="books-grid">
 		      {
 		      	this.props.section.map(books => (
-
 		      		<li key={books.id}>
 		      		<div className="book">
 		      		  <div className="book-top">

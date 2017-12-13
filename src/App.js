@@ -1,10 +1,11 @@
 import React from 'react'
 import './App.css';
-import Shelf from './BooksShelf';
+import BooksShelf from './BooksShelf';
 import * as BooksAPI from "./BooksAPI";
 import { Link } from "react-router-dom";
 import { Route } from "react-router-dom";
-import  SearchBooks from "./SearchComponent"
+import  SearchComponent from "./SearchComponent"
+import update from 'immutability-helper';
 
 class BooksApp extends React.Component {
   
@@ -12,7 +13,6 @@ class BooksApp extends React.Component {
     super();
 
     this.state = {
-      showSearchPage: false,
       books: [],
       currentlyReading: [],
       wantToRead: [],
@@ -41,12 +41,14 @@ class BooksApp extends React.Component {
 
   moveToSection(book, move) {
     window.this1 = this;
+    debugger;
+    if (move !== "none") {
+      let myBooks = update(this.state[move], {$push:[book]});
+      this.setState({[move]:myBooks});
+      BooksAPI.update(book, move).then((books) => this.updateShelf(books));
+    }
 
-    let myBooks = this.state[move];
-    myBooks.push(book);
-    this.setState({move : myBooks});
-  
-    BooksAPI.update(book, move).then((books) => this.updateShelf(books));
+
   }
 
   updateShelf(id){
@@ -61,7 +63,7 @@ class BooksApp extends React.Component {
     return (
       <div className="app">
         <Route  path="/search" render={() => (
-          <SearchBooks books={this.state.books} moveToSection={this.moveToSection} /> )}  /> 
+          <SearchComponent books={this.state.books} moveToSection={this.moveToSection} /> )}  /> 
         <Route exact path="/" render={() => (
           <div className="list-books">
             <div className="list-books-title">
@@ -71,18 +73,18 @@ class BooksApp extends React.Component {
               <div>
               <div className="bookshelf">
                 <h2 className="bookshelf-title">Currently Reading</h2>
-                  <Shelf books={this.state.books} section={this.state.currentlyReading} booksFilter={this.booksFilter(this.state.books, "currentlyReading")} moveToSection={this.moveToSection} currentSection="currentlyReading"/>
+                  <BooksShelf books={this.state.books} section={this.state.currentlyReading} booksFilter={this.booksFilter(this.state.books, "currentlyReading")} moveToSection={this.moveToSection} currentSection="currentlyReading"/>
               </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
-                    <Shelf books={this.state.books} section={this.state.wantToRead} booksFilter={this.booksFilter(this.state.books, "wantToRead")} moveToSection={this.moveToSection} currentSection="wantToRead"/>                    
+                    <BooksShelf books={this.state.books} section={this.state.wantToRead} booksFilter={this.booksFilter(this.state.books, "wantToRead")} moveToSection={this.moveToSection} currentSection="wantToRead"/>                    
                   </div>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
-                    <Shelf books={this.state.books} section={this.state.read} booksFilter={this.booksFilter(this.state.books, "read")} moveToSection={this.moveToSection} currentSection="wantToRead"/>                    
+                    <BooksShelf books={this.state.books} section={this.state.read} booksFilter={this.booksFilter(this.state.books, "read")} moveToSection={this.moveToSection} currentSection="wantToRead"/>                    
                   </div>
                 </div>
               </div>

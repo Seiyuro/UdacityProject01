@@ -5,34 +5,32 @@ import BookMenu from "./BookMenus"
 
 
 class SearchBooks extends Component {
-	state = { 
+	state = {
 		books: [],
 		query: ""
 	}
 
+
 	updateQuery = query => {
-		this.setState({query: query.trim()})
-		BooksAPI.search(query).then((books) => {
-			if (books){
-				if (books.error !== "empty query") {
-					this.setState({books});
-				} else {
-					this.setState({books:[]});
+		this.setState({query: query})
+		if (query) {
+			BooksAPI.search(query.trim()).then((books) => {
+				if (books){
+					if (books.error !== "empty query") {
+						debugger;
+						this.setState({books});
+					} else {
+						this.setState({books:[]});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
-	componentDidMount() {
-	  BooksAPI.getAll().then(books => {
-	    this.setState({books});
-	  });
-	}
-
-
-
+	
 	render(){
 		const { moveToSection } = this.props;
+		debugger
 		return (
 			<div className="search-books">
 			 	<div className="search-books-bar">
@@ -47,9 +45,9 @@ class SearchBooks extends Component {
 			    		<li key={books.id}>
 			    		<div className="book">
 			    		  <div className="book-top">
-			    		  	<div className="book-cover" style={{ width: 128, height: 174, backgroundImage: `url(${books.imageLinks.thumbnail})` }}>
+			    		  	<div className="book-cover" style={{ width: 128, height: 174, backgroundImage: `url(${books.imageLinks ? books.imageLinks.thumbnail : "http://via.placeholder.com/128x193?text=No%20Cover"})` }}>
 			    		  	</div>
-			    		    <BookMenu section={books.shelf} books={books} moveToSection={moveToSection} />
+			    		    <BookMenu section={books.shelf ? books.shelf : "none" } books={books} moveToSection={moveToSection} />
 			    		   </div>  
 			    		  <div className="book-title">{books.title}</div>
 			    		  <div className="book-authors">{books.authors}</div>

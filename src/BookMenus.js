@@ -5,7 +5,7 @@ class BookMenu extends Component {
 		return (
 			<div className="book-shelf-changer">
 			  <select onChange={ event => this.props.moveToSection(this.props.books, event.target.value)} value={this.props.section}>
-			    <option value="none" disabled>Move to...</option>
+			    <option value="disabled" disabled>Move to...</option>
 			    <option value="currentlyReading">Currently Reading</option>
 			    <option value="wantToRead">Want to Read</option>
 			    <option value="read">Read</option>
