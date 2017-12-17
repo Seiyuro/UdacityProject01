@@ -10,15 +10,22 @@ class SearchBooks extends Component {
 		query: ""
 	}
 
-
 	updateQuery = query => {
+		let currentBooksArray = this.props.books;
 		this.setState({query: query})
 		if (query) {
 			BooksAPI.search(query.trim()).then((books) => {
 				if (books){
 					if (books.error !== "empty query") {
-						debugger;
-						this.setState({books});
+						this.setState({
+							books: books.map(book => {
+						 	const ownedBook = currentBooksArray.find(b => b.id === book.id);
+						  	if (ownedBook) {
+						    	return Object.assign({}, book, ownedBook);
+						  	}
+						  	return book;
+							})
+						});
 					} else {
 						this.setState({books:[]});
 					}

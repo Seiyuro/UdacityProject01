@@ -41,7 +41,6 @@ class BooksApp extends React.Component {
 
   moveToSection(book, move) {
     window.this1 = this;
-    debugger;
     if (move !== "none") {
       let myBooks = update(this.state[move], {$push:[book]});
       this.setState({[move]:myBooks});
@@ -84,7 +83,7 @@ class BooksApp extends React.Component {
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
-                    <BooksShelf books={this.state.books} section={this.state.read} booksFilter={this.booksFilter(this.state.books, "read")} moveToSection={this.moveToSection} currentSection="wantToRead"/>                    
+                    <BooksShelf books={this.state.books} section={this.state.read} booksFilter={this.booksFilter(this.state.books, "read")} moveToSection={this.moveToSection} currentSection="read"/>                    
                   </div>
                 </div>
               </div>
