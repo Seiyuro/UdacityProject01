@@ -37,7 +37,6 @@ class SearchBooks extends Component {
 	
 	render(){
 		const { moveToSection } = this.props;
-		debugger
 		return (
 			<div className="search-books">
 			 	<div className="search-books-bar">

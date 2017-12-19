@@ -41,20 +41,29 @@ class BooksApp extends React.Component {
 
   moveToSection(book, move) {
     window.this1 = this;
+    let myBooks = update(this.state[move], {$push:[book]});
+    this.setState({[move]:myBooks});
+    
     if (move !== "none") {
-      let myBooks = update(this.state[move], {$push:[book]});
-      this.setState({[move]:myBooks});
-      BooksAPI.update(book, move).then((books) => this.updateShelf(books));
+      BooksAPI.update(book, move).then((booksResult) => {
+        // debugger;
+        // book.shelf = move;
+        this.updateShelf(booksResult, book, move)
+      });
     }
-
-
   }
 
-  updateShelf(id){
+  updateShelf(id, book, move){
+      const newCurrentlyReading = this.state.currentlyReading.filter((book, index) => { return book.id === id.currentlyReading[index] });
+      const newWanToRead = this.state.wantToRead.filter((book, index) => { return book.id === id.wantToRead[index] });
+      const newRead = this.state.read.filter((book, index) => { return book.id === id.read[index] });
+
+      const newBooks =(id.currentlyReading).concat(id.wantToRead).concat(id.read).reduce(() => this.state.books).map((changeBook) => { if (changeBook === book) {changeBook.shelf = move; return changeBook} else {return changeBook} });
     this.setState({ 
-      "currentlyReading": this.state.currentlyReading.filter((book, index) => { return book.id === id.currentlyReading[index] }),
-      "wantToRead": this.state.wantToRead.filter((book, index) => { return book.id === id.wantToRead[index] }),
-      "read": this.state.read.filter((book, index) => { return book.id === id.read[index] })
+      "books": newBooks,
+      "currentlyReading": newCurrentlyReading,
+      "wantToRead": newWanToRead,
+      "read": newRead
     })
   }
 
