@@ -41,24 +41,35 @@ class BooksApp extends React.Component {
 
   moveToSection(book, move) {
     window.this1 = this;
-    let myBooks = update(this.state[move], {$push:[book]});
-    this.setState({[move]:myBooks});
-    
+    if (!book.shelf) {
+      book.shelf = move;
+    }    
     if (move !== "none") {
       BooksAPI.update(book, move).then((booksResult) => {
-        // debugger;
-        // book.shelf = move;
+        let myBooks = update(this.state[move], {$push:[book]});
+        this.setState({[move]:myBooks});
         this.updateShelf(booksResult, book, move)
       });
     }
   }
 
   updateShelf(id, book, move){
-      const newCurrentlyReading = this.state.currentlyReading.filter((book, index) => { return book.id === id.currentlyReading[index] });
-      const newWanToRead = this.state.wantToRead.filter((book, index) => { return book.id === id.wantToRead[index] });
-      const newRead = this.state.read.filter((book, index) => { return book.id === id.read[index] });
+    const newCurrentlyReading = this.state.currentlyReading.filter((book, index) => { return book.id === id.currentlyReading[index] });
+    const newWanToRead = this.state.wantToRead.filter((book, index) => { return book.id === id.wantToRead[index] });
+    const newRead = this.state.read.filter((book, index) => { return book.id === id.read[index] });
+    const newBooks = (id.currentlyReading).concat(id.wantToRead).concat(id.read).reduce((books, bookId) => {
+      const changeBook = this.state.books.find(b => { 
+        return b.id === bookId 
+      });
+      if (changeBook.id === book.id) {
+        changeBook.shelf = move; 
+      }
 
-      const newBooks =(id.currentlyReading).concat(id.wantToRead).concat(id.read).reduce(() => this.state.books).map((changeBook) => { if (changeBook === book) {changeBook.shelf = move; return changeBook} else {return changeBook} });
+      books.push(changeBook);
+
+      return books;
+
+    }, []);
     this.setState({ 
       "books": newBooks,
       "currentlyReading": newCurrentlyReading,
