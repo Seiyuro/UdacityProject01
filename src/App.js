@@ -65,10 +65,9 @@ class BooksApp extends React.Component {
         if (changeBook) {
           if (changeBook.id === book.id) {
             changeBook.shelf = move; 
-          }        
+          }
+          books.push(changeBook);        
         }
-        books.push(changeBook);
-
         return books;
 
       }, []);
