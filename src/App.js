@@ -41,9 +41,9 @@ class BooksApp extends React.Component {
 
   moveToSection(book, move) {
     window.this1 = this;
-    if (!book.shelf) {
-      book.shelf = move;
-    }    
+      if (move !== "none"){
+        book.shelf = move;
+      }
     if (move !== "none") {
       BooksAPI.update(book, move).then((booksResult) => {
         let myBooks = update(this.state[move], {$push:[book]});
@@ -54,28 +54,30 @@ class BooksApp extends React.Component {
   }
 
   updateShelf(id, book, move){
-    const newCurrentlyReading = this.state.currentlyReading.filter((book, index) => { return book.id === id.currentlyReading[index] });
-    const newWanToRead = this.state.wantToRead.filter((book, index) => { return book.id === id.wantToRead[index] });
-    const newRead = this.state.read.filter((book, index) => { return book.id === id.read[index] });
-    const newBooks = (id.currentlyReading).concat(id.wantToRead).concat(id.read).reduce((books, bookId) => {
-      const changeBook = this.state.books.find(b => { 
-        return b.id === bookId 
-      });
-      if (changeBook.id === book.id) {
-        changeBook.shelf = move; 
-      }
+      const newCurrentlyReading = this.state.currentlyReading.filter((book, index) => { return book.id === id.currentlyReading[index] });
+      const newWanToRead = this.state.wantToRead.filter((book, index) => { return book.id === id.wantToRead[index] });
+      const newRead = this.state.read.filter((book, index) => { return book.id === id.read[index] });
+      const prevBooks = this.state.books || [];
+      const newBooks = (id.currentlyReading).concat(id.wantToRead).concat(id.read).reduce((books, bookId) => {
+        const changeBook = prevBooks.find(b => { 
+          return b ? (b.id === bookId) : {}; 
+        });
+        if (changeBook) {
+          if (changeBook.id === book.id) {
+            changeBook.shelf = move; 
+          }        
+        }
+        books.push(changeBook);
 
-      books.push(changeBook);
+        return books;
 
-      return books;
-
-    }, []);
-    this.setState({ 
-      "books": newBooks,
-      "currentlyReading": newCurrentlyReading,
-      "wantToRead": newWanToRead,
-      "read": newRead
-    })
+      }, []);
+      this.setState({ 
+        "books": newBooks,
+        "currentlyReading": newCurrentlyReading,
+        "wantToRead": newWanToRead,
+        "read": newRead
+      })
   }
 
   render() {
